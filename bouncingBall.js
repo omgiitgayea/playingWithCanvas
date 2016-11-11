@@ -47,17 +47,15 @@ function draw() {
     dy += accely;
     y += dy;
 
-    if (x + dx > WIDTH || x + dx < 0)
-    {
-        dx = -dx;
-    }
     if (x + dx > WIDTH)
     {
         x = WIDTH - radius;
+        dx = -dx;
     }
     if (x + dx < 0)
     {
         x = radius;
+        dx = -dx;
     }
 
     if ((y + dy) > HEIGHT)
