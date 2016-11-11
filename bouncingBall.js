@@ -11,6 +11,7 @@ var accely = 5;
 var radius = 15;
 var x = radius;
 var y = radius;
+var friction = .5;
 
 function init()
 {
@@ -62,10 +63,20 @@ function draw() {
     if ((y + dy) > HEIGHT)
     {
         dy = -dy;
+        if (dx < 0)
+        {
+            dx += friction;
+        }
+        else
+        {
+            dx -= friction;
+        }
         if (Math.abs(dy + accely) <= (3 * accely))
         {
             dy = 0;
             accely = 0;
+            dx = 0;
+            friction = 0;
         }
         y = HEIGHT - radius;
     }
