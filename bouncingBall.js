@@ -20,7 +20,7 @@ function init()
     ctx = $("#canvasArea")[0].getContext("2d");
     WIDTH = $("#canvasArea").width();
     HEIGHT = $("#canvasArea").height();
-    return setInterval(draw, 100);
+    draw();
 }
 
 init();
@@ -78,4 +78,5 @@ function draw() {
         }
         y = HEIGHT - radius;
     }
+    window.requestAnimationFrame(draw);
 }
