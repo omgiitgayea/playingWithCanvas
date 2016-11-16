@@ -153,6 +153,7 @@ function update()
 
 function render()
 {
+    renderingContext.clearRect(0, 0, width, height);
     liara.draw();
     // renderingContext.clearRect(0, 0, width, height);
     //
@@ -183,6 +184,6 @@ function render()
 
 function onpress()
 {
-    // currentY -= UPSPEED;
+    liara.y -= UPSPEED;
     // render();
 }
