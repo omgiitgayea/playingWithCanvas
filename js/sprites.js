@@ -2,6 +2,7 @@
  * Created by GodaiYuusaku on 11/14/16.
  */
 var charSprite;
+var testSprite = [];
 
 function Sprite(img, x, y, width, height)
 {
@@ -24,4 +25,10 @@ function initSprites(img)
         new Sprite(img, 51, 478, 37, 69),
         new Sprite(img, 88, 478, 37, 69)
     ];
+
+    for (var i = 0; i < 3; i++)
+    {
+        testSprite.push(new Sprite(img, 270, 160, 72, 70));
+    }
+
 }
