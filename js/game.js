@@ -16,16 +16,17 @@ var frames = 0,
     states = {Splash: 0, Game: 1, Score: 2};
 
 var FRAMES_PER_IMAGE = 5,
-    GRAVITY = 5,
-    UPSPEED = 15,
-    XSPEED = 10;
+    GRAVITY = 2,
+    UPSPEED = 20,
+    XSPEED = 2;
 
 function Character()
 {
     this.frame = 0;
     this.animation = [0, 1, 2, 1];
-    this.x = 50;
-    this.y = 50;
+    this.x = 200;
+    this.y = -50;
+    this.rotation = Math.PI / 2; // + (20 * Math.PI / 180);
 
     this.update = function()
     {
@@ -35,17 +36,20 @@ function Character()
         this.frame %= this.animation.length;            // makes sure that we stay within the animation array
         if (this.y < (height - charSprite[0].height) - 50) {
             this.y += GRAVITY;
+            // this.x += XSPEED;
         }
         else
         {
             this.y = height - charSprite[0].height - 50;
+            this.frame = 0;
+            // this.x += XSPEED;
         }
     };
 
     this.draw = function () {
         renderingContext.save();
 
-        renderingContext.translate(this.x, this.y);
+        renderingContext.translate(this.x + charSprite[0].height, this.y + charSprite[0].width);
         renderingContext.rotate(this.rotation);
 
         var n = this.animation[this.frame];
@@ -86,8 +90,8 @@ function windowSetup()
     var inputEvent = "touchstart";
     if (width >= 500)
     {
-        width = 380;
-        height = 430;
+        width = width * 0.8;
+        height = height * 0.8;
         inputEvent = "mousedown";
     }
 
@@ -185,5 +189,4 @@ function render()
 function onpress()
 {
     liara.y -= UPSPEED;
-    // render();
 }
