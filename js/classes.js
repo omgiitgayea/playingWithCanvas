@@ -6,7 +6,7 @@ function Character()
     this.frame = 0;
     this.animation = [0, 1, 2, 1];
     this.x = 200;
-    this.y = -50;
+    this.y = 100;
     this.rotation = Math.PI / 2; // + (20 * Math.PI / 180);
 
     this.update = function()
@@ -15,16 +15,24 @@ function Character()
 
         this.frame += frames % n === 0 ? 1 : 0;
         this.frame %= this.animation.length;            // makes sure that we stay within the animation array
-        if (this.y < (height - charSprite[0].height) - 50) {
-            this.y += GRAVITY;
-            // this.x += XSPEED;
-        }
-        else
+        if (currentState === states.Splash)
         {
-            this.y = height - charSprite[0].height - 50;
-            this.frame = 0;
-            // this.x += XSPEED;
+            this.updateIdleChar();
         }
+        else if (currentState === states.Game) {
+
+            if (this.y < (height - charSprite[0].height - backgroundSprite.height) - 45) {
+                this.y += gravity;
+            }
+            else {
+                currentState = states.Score;
+            }
+        }
+    };
+
+    this.updateIdleChar = function() {
+        this.y = 20* Math.cos(frames/5);
+        this.rotation = Math.PI / 2;
     };
 
     this.draw = function () {
@@ -48,7 +56,7 @@ function SmashyThings(offset)
     this.update = function()
     {
         this.x -= XSPEED;
-        if (this.x <= (0 - testSprite.width))
+        if (this.x <= (0 - smashSprite.width))
         {
             this.x = width;
         }
@@ -60,7 +68,7 @@ function SmashyThings(offset)
 
         renderingContext.translate(this.x, this.y);
 
-        testSprite.draw(renderingContext, 0, 0);
+        smashSprite.draw(renderingContext, 0, 0);
 
         renderingContext.restore();
     }
@@ -74,7 +82,7 @@ function SmashyThingsBottom(offsetx, offsety)
     this.update = function()
     {
         this.x -= XSPEED;
-        if (this.x <= (0 - testSprite.width))
+        if (this.x <= (0 - smashSprite.width))
         {
             this.x = width;
         }
@@ -86,7 +94,7 @@ function SmashyThingsBottom(offsetx, offsety)
 
         renderingContext.translate(this.x, this.y);
 
-        testSprite.draw(renderingContext, 0, 0);
+        smashSprite.draw(renderingContext, 0, 0);
 
         renderingContext.restore();
     }

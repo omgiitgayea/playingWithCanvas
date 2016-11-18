@@ -2,7 +2,8 @@
  * Created by GodaiYuusaku on 11/14/16.
  */
 var charSprite;
-var testSprite;
+var smashSprite;
+var backgroundSprite;
 
 function Sprite(img, x, y, width, height)
 {
@@ -26,5 +27,7 @@ function initSprites(img)
         new Sprite(img, 88, 478, 37, 69)
     ];
 
-    testSprite = new Sprite(img, 270, 160, 72, 70);
+    smashSprite = new Sprite(img, 270, 160, 72, 70);
+
+    backgroundSprite = new Sprite(img, 0, 0, width, 100);
 }

@@ -14,10 +14,10 @@ var
 
 var frames = 0,
     states = {Splash: 0, Game: 1, Score: 2},
+    gravity = 0,
     numSmashyThings;
 
-var GRAVITY = 2,
-    UPSPEED = 20,
+var UPSPEED = 20,
     XSPEED = 5;
 
 
@@ -27,7 +27,7 @@ function main()
     windowSetup();
     canvasSetup();
     loadGraphics();
-    numSmashyThings = 500;
+    numSmashyThings = 1000;
     offsetBlocks = width / numSmashyThings;
     $("body").append(canvas);
     liara = new Character();
@@ -37,7 +37,8 @@ function main()
         var spaceBlocks = blocksArray[2 * i].y + 200;
         blocksArray.push(new SmashyThingsBottom(i * offsetBlocks, spaceBlocks));
     }
-    // currentState = states.Splash;
+
+    currentState = states.Game;
 }
 
 function canvasSetup()
@@ -94,23 +95,31 @@ function update()
 {
     frames++;
     liara.update();
-    for (var i = 0; i < blocksArray.length; i++)
-    {
-        blocksArray[i].update();
+    if (currentState === states.Game) {
+        gravity = 2;
+        for (var i = 0; i < blocksArray.length; i++) {
+            blocksArray[i].update();
+        }
     }
 }
 
 function render()
 {
-    renderingContext.clearRect(0, 0, width, height);
-    liara.draw();
-    for (var i = 0; i < blocksArray.length; i++)
-    {
-        blocksArray[i].draw();
+    if (currentState != states.Score) {
+        renderingContext.clearRect(0, 0, width, height);
+        backgroundSprite.draw(renderingContext, 0, height - backgroundSprite.height);
+        liara.draw();
+        if (currentState === states.Game) {
+            for (var i = 0; i < blocksArray.length; i++) {
+                blocksArray[i].draw();
+            }
+        }
     }
 }
 
 function onpress()
 {
-    liara.y -= UPSPEED;
+    if (currentState === states.Game) {
+        liara.y -= UPSPEED;
+    }
 }
