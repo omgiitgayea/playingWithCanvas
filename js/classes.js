@@ -21,8 +21,8 @@ function Character()
         }
         else if (currentState === states.Game) {
 
-            if (this.y < (height - charSprite[0].height - backgroundSprite.height) - 45) {
-                this.y += gravity;
+            if ((this.y < (height - charSprite[0].height - height * BOTTOM_PCT) - 45) && this.y >= -100) {
+                this.y += GRAVITY;
             }
             else {
                 currentState = states.Score;
@@ -31,7 +31,7 @@ function Character()
     };
 
     this.updateIdleChar = function() {
-        this.y = 20* Math.cos(frames/5);
+        this.y = 10 * Math.cos(frames/5);
         this.rotation = Math.PI / 2;
     };
 
@@ -48,45 +48,41 @@ function Character()
     }
 }
 
-function SmashyThings(offset)
+function SmashyThings(offsetX, offsetY, top)
 {
-    this.x = width + offset;
-    this.y = Math.floor(Math.random() * (height / 2));
+    this.x = width + offsetX;
+    this.top = top;
+    if (offsetY === 0)
+        this.y = Math.floor(Math.random() * (height / 2)) + offsetY;
+    else
+        this.y = offsetY;
 
     this.update = function()
     {
         this.x -= XSPEED;
-        if (this.x <= (0 - smashSprite.width))
-        {
-            this.x = width;
-        }
-
-    };
+        };
 
     this.draw = function () {
         renderingContext.save();
 
         renderingContext.translate(this.x, this.y);
-
-        smashSprite.draw(renderingContext, 0, 0);
+        if (this.top)
+            smashSprite.draw(renderingContext, 0, 0);
+        else
+            smashSpriteBottom.draw(renderingContext, 0, 0);
 
         renderingContext.restore();
     }
 }
 
-function SmashyThingsBottom(offsetx, offsety)
+function FloorThings(offsetX)
 {
-    this.x = width + offsetx;
-    this.y = offsety;
+    this.x = offsetX;
+    this.y = height - Math.floor(Math.random() * (height * BOTTOM_PCT));
 
     this.update = function()
     {
         this.x -= XSPEED;
-        if (this.x <= (0 - smashSprite.width))
-        {
-            this.x = width;
-        }
-
     };
 
     this.draw = function () {
@@ -94,7 +90,7 @@ function SmashyThingsBottom(offsetx, offsety)
 
         renderingContext.translate(this.x, this.y);
 
-        smashSprite.draw(renderingContext, 0, 0);
+        rockSprite.draw(renderingContext, 0, 0);
 
         renderingContext.restore();
     }

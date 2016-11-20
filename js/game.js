@@ -4,21 +4,27 @@
 var
     liara,
     blocksArray = [],
+    rocksArray = [],
     canvas,
     renderingContext,
     width,
     height,
     currentX,
     currentState,
-    offsetBlocks;
+    offsetBlocks,
+    offsetRocks,
+    myGradient,
+    myGroundGradient;
 
 var frames = 0,
     states = {Splash: 0, Game: 1, Score: 2},
-    gravity = 0,
     numSmashyThings;
 
 var UPSPEED = 20,
-    XSPEED = 5;
+    GRAVITY = 1,
+    XSPEED = 2,
+    BOTTOM_PCT = 0.15,
+    NUM_ROCKS = 100;
 
 
 
@@ -27,15 +33,19 @@ function main()
     windowSetup();
     canvasSetup();
     loadGraphics();
-    numSmashyThings = 1000;
+    numSmashyThings = 5;
     offsetBlocks = width / numSmashyThings;
+    offsetRocks = width / NUM_ROCKS;
     $("body").append(canvas);
     liara = new Character();
     for (var i = 0; i < numSmashyThings; i++)
     {
-        blocksArray.push(new SmashyThings(i * offsetBlocks));
+        blocksArray.push(new SmashyThings(i * offsetBlocks, 0, true));
         var spaceBlocks = blocksArray[2 * i].y + 200;
-        blocksArray.push(new SmashyThingsBottom(i * offsetBlocks, spaceBlocks));
+        blocksArray.push(new SmashyThings(i * offsetBlocks, spaceBlocks, false));
+    }
+    for (var i = 0; i < NUM_ROCKS; i++) {
+        rocksArray.push(new FloorThings(i * offsetRocks));
     }
 
     currentState = states.Game;
@@ -51,6 +61,16 @@ function canvasSetup()
     canvas.height = height;
 
     renderingContext = canvas.getContext("2d");
+
+    myGradient = renderingContext.createLinearGradient(0, 0, 0, height - height * BOTTOM_PCT);
+    myGradient.addColorStop(0, "turquoise");
+    myGradient.addColorStop(0.25, "darkcyan");
+    myGradient.addColorStop(0.85, "mediumblue");
+    myGradient.addColorStop(1, "darkblue");
+
+    myGroundGradient = renderingContext.createLinearGradient(0, height - height * BOTTOM_PCT, 0, height);
+    myGroundGradient.addColorStop(0, "peru");
+    myGroundGradient.addColorStop(1, "saddlebrown");
 }
 
 function windowSetup()
@@ -95,24 +115,47 @@ function update()
 {
     frames++;
     liara.update();
+    for (var i = 0; i < rocksArray.length; i++)
+    {
+        rocksArray[i].update();
+        if (rocksArray[i].x <= 0 - rockSprite.width)
+        {
+            rocksArray.splice(0, 1);
+            rocksArray.push(new FloorThings(width));
+        }
+    }
     if (currentState === states.Game) {
-        gravity = 2;
         for (var i = 0; i < blocksArray.length; i++) {
             blocksArray[i].update();
+            if (blocksArray[i].x <= 0 - smashSprite.width)
+            {
+                blocksArray.splice(0, 2);
+                blocksArray.push(new SmashyThings(0, 0, true));
+                var spaceBlocks = blocksArray[blocksArray.length - 1].y + 200;
+                blocksArray.push(new SmashyThings(0, spaceBlocks, false));
+            }
         }
+
     }
 }
 
 function render()
 {
     if (currentState != states.Score) {
-        renderingContext.clearRect(0, 0, width, height);
-        backgroundSprite.draw(renderingContext, 0, height - backgroundSprite.height);
+        renderingContext.fillStyle = myGradient;
+        renderingContext.fillRect(0, 0, width, height - height * BOTTOM_PCT);
         liara.draw();
         if (currentState === states.Game) {
             for (var i = 0; i < blocksArray.length; i++) {
                 blocksArray[i].draw();
             }
+        }
+        // backgroundSprite.draw(renderingContext, 0, height - backgroundSprite.height);
+        renderingContext.fillStyle = myGroundGradient;
+        renderingContext.fillRect(0, height - height * BOTTOM_PCT, width, height * BOTTOM_PCT);
+        for (var i = 0; i < rocksArray.length; i++)
+        {
+            rocksArray[i].draw();
         }
     }
 }

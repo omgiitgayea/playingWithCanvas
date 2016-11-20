@@ -3,7 +3,8 @@
  */
 var charSprite;
 var smashSprite;
-var backgroundSprite;
+var smashSpriteBottom;
+var rockSprite;
 
 function Sprite(img, x, y, width, height)
 {
@@ -29,5 +30,7 @@ function initSprites(img)
 
     smashSprite = new Sprite(img, 270, 160, 72, 70);
 
-    backgroundSprite = new Sprite(img, 0, 0, width, 100);
+    smashSpriteBottom = new Sprite(img, 0, 0, 50, 100);
+
+    rockSprite = new Sprite(img, 0, 0, 20, 20);
 }
