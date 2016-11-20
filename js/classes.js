@@ -79,6 +79,7 @@ function FloorThings(offsetX)
 {
     this.x = offsetX;
     this.y = height - Math.floor(Math.random() * (height * BOTTOM_PCT));
+    this.rockType = Math.floor(Math.random() * 5);
 
     this.update = function()
     {
@@ -90,7 +91,7 @@ function FloorThings(offsetX)
 
         renderingContext.translate(this.x, this.y);
 
-        rockSprite.draw(renderingContext, 0, 0);
+        rockSprite[this.rockType].draw(renderingContext, 0, 0);
 
         renderingContext.restore();
     }

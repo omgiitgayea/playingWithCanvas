@@ -118,7 +118,7 @@ function update()
     for (var i = 0; i < rocksArray.length; i++)
     {
         rocksArray[i].update();
-        if (rocksArray[i].x <= 0 - rockSprite.width)
+        if (rocksArray[i].x <= 0 - rockSprite[rocksArray[i].rockType].width)
         {
             rocksArray.splice(0, 1);
             rocksArray.push(new FloorThings(width));
@@ -135,7 +135,6 @@ function update()
                 blocksArray.push(new SmashyThings(0, spaceBlocks, false));
             }
         }
-
     }
 }
 

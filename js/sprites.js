@@ -32,5 +32,11 @@ function initSprites(img)
 
     smashSpriteBottom = new Sprite(img, 0, 0, 50, 100);
 
-    rockSprite = new Sprite(img, 0, 0, 20, 20);
+    rockSprite = [
+        new Sprite(img, 0, 0, 20, 20),
+        new Sprite(img, 0, 25, 20, 20),
+        new Sprite(img, 0, 50, 20, 20),
+        new Sprite(img, 0, 75, 20, 20),
+        new Sprite(img, 0, 100, 20, 20)
+    ];
 }
