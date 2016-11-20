@@ -23,20 +23,20 @@ Sprite.prototype.draw = function(renderingContext, x, y)
 function initSprites(img)
 {
     charSprite = [
-        new Sprite(img, 14, 478, 37, 69),
-        new Sprite(img, 51, 478, 37, 69),
-        new Sprite(img, 88, 478, 37, 69)
+        new Sprite(img, 0, 0, 231.5, 64.5),
+        new Sprite(img, 0, 64.5, 231.5, 64.5),
+        new Sprite(img, 0, 129, 231.5, 64.5)
     ];
 
-    smashSprite = new Sprite(img, 270, 160, 72, 70);
+    smashSprite = new Sprite(img, 231.5, 0, 95, 1024);
 
-    smashSpriteBottom = new Sprite(img, 0, 0, 50, 100);
+    smashSpriteBottom = new Sprite(img, 326.5, 0, 95, 1024);
 
     rockSprite = [
-        new Sprite(img, 0, 0, 20, 20),
-        new Sprite(img, 0, 25, 20, 20),
-        new Sprite(img, 0, 50, 20, 20),
-        new Sprite(img, 0, 75, 20, 20),
-        new Sprite(img, 0, 100, 20, 20)
+        new Sprite(img, 0, 193.5, 23.5, 17.5),
+        new Sprite(img, 23.5, 193.5, 21, 18.5),
+        new Sprite(img, 44.5, 193.5, 23, 20),
+        new Sprite(img, 67.5, 193.5, 22.5, 16.5),
+        new Sprite(img, 90, 193.5, 19.5, 22)
     ];
 }

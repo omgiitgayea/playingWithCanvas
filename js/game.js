@@ -41,7 +41,7 @@ function main()
     for (var i = 0; i < numSmashyThings; i++)
     {
         blocksArray.push(new SmashyThings(i * offsetBlocks, 0, true));
-        var spaceBlocks = blocksArray[2 * i].y + 200;
+        var spaceBlocks = blocksArray[2 * i].y + 1024 + 200;
         blocksArray.push(new SmashyThings(i * offsetBlocks, spaceBlocks, false));
     }
     for (var i = 0; i < NUM_ROCKS; i++) {
@@ -95,7 +95,7 @@ function loadGraphics()
 {
     // initiate the sprite sheet
     var img = new Image();
-    img.src = "images/massEffectSpriteSheet.png";
+    img.src = "images/myNewSprites1024.png";
     img.onload = function ()
     {
         initSprites(this);
@@ -131,7 +131,7 @@ function update()
             {
                 blocksArray.splice(0, 2);
                 blocksArray.push(new SmashyThings(0, 0, true));
-                var spaceBlocks = blocksArray[blocksArray.length - 1].y + 200;
+                var spaceBlocks = blocksArray[blocksArray.length - 1].y + 1024 + 200;
                 blocksArray.push(new SmashyThings(0, spaceBlocks, false));
             }
         }

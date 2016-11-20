@@ -5,9 +5,9 @@ function Character()
 {
     this.frame = 0;
     this.animation = [0, 1, 2, 1];
-    this.x = 200;
-    this.y = 100;
-    this.rotation = Math.PI / 2; // + (20 * Math.PI / 180);
+    this.x = 0;
+    this.y = 0;
+    this.rotation = 0;
 
     this.update = function()
     {
@@ -32,13 +32,13 @@ function Character()
 
     this.updateIdleChar = function() {
         this.y = 10 * Math.cos(frames/5);
-        this.rotation = Math.PI / 2;
+        this.rotation = 0;
     };
 
     this.draw = function () {
         renderingContext.save();
 
-        renderingContext.translate(this.x + charSprite[0].height, this.y + charSprite[0].width);
+        renderingContext.translate(this.x, this.y);
         renderingContext.rotate(this.rotation);
 
         var n = this.animation[this.frame];
@@ -53,7 +53,7 @@ function SmashyThings(offsetX, offsetY, top)
     this.x = width + offsetX;
     this.top = top;
     if (offsetY === 0)
-        this.y = Math.floor(Math.random() * (height / 2)) + offsetY;
+        this.y = Math.floor(Math.random() * (height / 2)) - 1024;
     else
         this.y = offsetY;
 
