@@ -8,6 +8,7 @@ function Character()
     this.x = 0;
     this.y = 0;
     this.rotation = 0;
+    this.scale = 0.5;
 
     this.update = function()
     {
@@ -21,7 +22,7 @@ function Character()
         }
         else if (currentState === states.Game) {
 
-            if ((this.y < (height - charSprite[0].height - height * BOTTOM_PCT) - 45) && this.y >= -100) {
+            if ((this.y < (height - charSprite[0].height / 2 - height * BOTTOM_PCT) - 22.5) && this.y >= -100) {
                 this.y += GRAVITY;
             }
             else {
@@ -40,6 +41,7 @@ function Character()
 
         renderingContext.translate(this.x, this.y);
         renderingContext.rotate(this.rotation);
+        renderingContext.scale(this.scale, this.scale);
 
         var n = this.animation[this.frame];
         charSprite[n].draw(renderingContext, 50, 50);
@@ -66,6 +68,7 @@ function SmashyThings(offsetX, offsetY, top)
         renderingContext.save();
 
         renderingContext.translate(this.x, this.y);
+
         if (this.top)
             smashSprite.draw(renderingContext, 0, 0);
         else

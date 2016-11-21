@@ -157,6 +157,13 @@ function render()
             rocksArray[i].draw();
         }
     }
+    else if (currentState == states.Score)
+    {
+        // renderingContext.save();
+        // renderingContext.fillStyle = "rgba(0, 0, 0, 0.2)";
+        // renderingContext.fillRect(0, 0, width, height);
+        // renderingContext.restore();
+    }
 }
 
 function onpress()
