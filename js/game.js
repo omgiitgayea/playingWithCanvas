@@ -54,7 +54,7 @@ function main() {
 function canvasSetup() {
     canvas = document.createElement("canvas");
 
-    canvas.id = "canvasArea"
+    canvas.id = "canvasArea";
 
     canvas.width = width;
     canvas.height = height;
@@ -142,21 +142,25 @@ function update() {
                         if ((midRockY - midCharY) < ((SCALE_FACTOR * charSprite[0].height + smashSprite.height) / 2)) {
                             currentState = states.Score;
                         }
-                        else {
-                            myScore += POINTS_PER_DODGE;
-                            console.log(myScore);
-                        }
                     }
                 }
             }
             else {
-
+                if (!blocksArray[i].passed)
+                {
+                    if(i % 2 === 0) {
+                        myScore += POINTS_PER_DODGE;
+                        blocksArray[i].passed = true;
+                        console.log(myScore);
+                    }
+                }
             }
         }
     }
 }
 
 function render() {
+    $("#scoreDiv").html(myScore);
     renderingContext.fillStyle = myGradient;
     renderingContext.fillRect(0, 0, width, height - height * BOTTOM_PCT);
     for (var i = 0; i < blocksArray.length; i++) {
@@ -170,6 +174,15 @@ function render() {
     }
     if (currentState != states.Score) {
         liara.draw();
+
+    }
+
+    if (currentState != states.Splash)
+    {
+        renderingContext.font = "40px Verdana";
+        renderingContext.fillStyle = "orange";
+        renderingContext.textAlign = "right";
+        renderingContext.fillText("Score: " + myScore, width - 0.1 * width, 0.1 * height);
     }
 
     if (currentState === states.Splash)
@@ -177,19 +190,22 @@ function render() {
         renderingContext.font = "75px Verdana";
         renderingContext.fillStyle = "black";
         renderingContext.textAlign = "center";
-        renderingContext.fillText("Keep Liara Alive!", width / 2, 100);
+        renderingContext.fillText("Keep Liara Alive!", width / 2, 0.2 * height);
 
         renderingContext.font = "40px Verdana";
         renderingContext.fillStyle = "black";
         renderingContext.textAlign = "center";
-        renderingContext.fillText("Click to Start", width / 2, height - 300);
+        renderingContext.fillText("Click to Start", width / 2, height - 0.2 * height);
     }
     else if (currentState === states.Score)
     {
+        renderingContext.fillStyle = "rgba(0, 0, 0, 0.5)";
+        renderingContext.fillRect(0, 0, width, height);
         renderingContext.font = "40px Verdana";
         renderingContext.fillStyle = "black";
         renderingContext.textAlign = "center";
-        renderingContext.fillText("Click to Begin Again", width / 2, height - 300);
+        renderingContext.fillText("You got a score of " + myScore, width / 2, 0.2 * height);
+        renderingContext.fillText("Click to Begin Again", width / 2, height - 0.2 * height);
     }
 }
 

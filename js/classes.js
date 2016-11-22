@@ -61,6 +61,7 @@ function SmashyThings(offsetX, offsetY, top)
 {
     this.x = width + offsetX;
     this.top = top;
+    this.passed = false;
     if (offsetY === 0)
         this.y = Math.floor(Math.random() * (height / 2)) - 1024;
     else
