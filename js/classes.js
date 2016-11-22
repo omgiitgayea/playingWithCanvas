@@ -5,10 +5,10 @@ function Character()
 {
     this.frame = 0;
     this.animation = [0, 1, 2, 1];
-    this.x = 0;
-    this.y = 0;
+    this.x = width / 2;
+    this.y = height / 2;
     this.rotation = 0;
-    this.scale = 0.5;
+    this.scale = SCALE_FACTOR;
 
     this.update = function()
     {
@@ -22,29 +22,36 @@ function Character()
         }
         else if (currentState === states.Game) {
 
-            if ((this.y < (height - charSprite[0].height / 2 - height * BOTTOM_PCT) - 22.5) && this.y >= -100) {
+            if ((this.y < ((height - charSprite[0].height / 2 - height * BOTTOM_PCT) / SCALE_FACTOR)) && this.y >= -25) {
                 this.y += GRAVITY;
             }
             else {
+                console.log("I hit bottom...");
+                console.log(this.y);
                 currentState = states.Score;
             }
+        }
+        else
+        {
+            this.x = width / 2;
+            this.y = height / 2
         }
     };
 
     this.updateIdleChar = function() {
-        this.y = 10 * Math.cos(frames/5);
+        this.y += 5 * Math.cos(frames/10);
         this.rotation = 0;
     };
 
     this.draw = function () {
         renderingContext.save();
 
-        renderingContext.translate(this.x, this.y);
+        // renderingContext.translate(this.x, this.y);
         renderingContext.rotate(this.rotation);
         renderingContext.scale(this.scale, this.scale);
 
         var n = this.animation[this.frame];
-        charSprite[n].draw(renderingContext, 50, 50);
+        charSprite[n].draw(renderingContext, this.x, this.y);
 
         renderingContext.restore();
     }
@@ -61,18 +68,19 @@ function SmashyThings(offsetX, offsetY, top)
 
     this.update = function()
     {
-        this.x -= XSPEED;
-        };
+        if (currentState == states.Game)
+            this.x -= XSPEED;
+    };
 
     this.draw = function () {
         renderingContext.save();
 
-        renderingContext.translate(this.x, this.y);
+        // renderingContext.translate(this.x, this.y);
 
         if (this.top)
-            smashSprite.draw(renderingContext, 0, 0);
+            smashSprite.draw(renderingContext, this.x, this.y);
         else
-            smashSpriteBottom.draw(renderingContext, 0, 0);
+            smashSpriteBottom.draw(renderingContext, this.x, this.y);
 
         renderingContext.restore();
     }
@@ -86,7 +94,8 @@ function FloorThings(offsetX)
 
     this.update = function()
     {
-        this.x -= XSPEED;
+        if (currentState == states.Game)
+            this.x -= XSPEED;
     };
 
     this.draw = function () {
