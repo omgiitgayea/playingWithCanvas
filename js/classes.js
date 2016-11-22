@@ -9,6 +9,12 @@ function Character()
     this.y = height / 2;
     this.rotation = 0;
     this.scale = SCALE_FACTOR;
+    this.velocity = 0;
+
+    this.jump = function()
+    {
+        this.velocity -= UPSPEED;
+    };
 
     this.update = function()
     {
@@ -23,11 +29,10 @@ function Character()
         else if (currentState === states.Game) {
 
             if ((this.y < ((height - charSprite[0].height / 2 - height * BOTTOM_PCT) / SCALE_FACTOR)) && this.y >= -25) {
-                this.y += GRAVITY;
+                this.velocity += GRAVITY;
+                this.y += this.velocity;
             }
             else {
-                console.log("I hit bottom...");
-                console.log(this.y);
                 currentState = states.Score;
             }
         }

@@ -21,8 +21,8 @@ var frames = 0,
     numSmashyThings,
     myScore = 0;
 
-var UPSPEED = 20,
-    GRAVITY = 1,
+var UPSPEED = 5,
+    GRAVITY = 0.25,
     XSPEED = 2,
     BOTTOM_PCT = 0.15,
     NUM_ROCKS = 100,
@@ -195,7 +195,7 @@ function render() {
         renderingContext.font = "40px Verdana";
         renderingContext.fillStyle = "black";
         renderingContext.textAlign = "center";
-        renderingContext.fillText("Click to Start", width / 2, height - 0.2 * height);
+        renderingContext.fillText("Click Anywhere to Start", width / 2, height - 0.2 * height);
     }
     else if (currentState === states.Score)
     {
@@ -209,9 +209,9 @@ function render() {
     }
 }
 
-function onpress() {
+function onpress(event) {               // need event for a reset button
     if (currentState === states.Game) {
-        liara.y -= UPSPEED;
+        liara.jump();
     }
     else if (currentState === states.Splash) {
         currentState = states.Game;
