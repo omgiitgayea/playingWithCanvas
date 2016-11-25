@@ -24,6 +24,8 @@ function Character()
         this.frame %= this.animation.length;            // makes sure that we stay within the animation array
         if (currentState === states.Splash)
         {
+            this.x = width / 2;
+            this.y = height / 2;
             this.updateIdleChar();
         }
         else if (currentState === states.Game) {
@@ -36,22 +38,17 @@ function Character()
                 currentState = states.Score;
             }
         }
-        else
-        {
-            this.x = width / 2;
-            this.y = height / 2
-        }
     };
 
     this.updateIdleChar = function() {
         this.y += 5 * Math.cos(frames/10);
         this.rotation = 0;
+        this.velocity = 0;
     };
 
     this.draw = function () {
         renderingContext.save();
 
-        // renderingContext.translate(this.x, this.y);
         renderingContext.rotate(this.rotation);
         renderingContext.scale(this.scale, this.scale);
 
@@ -81,8 +78,6 @@ function SmashyThings(offsetX, offsetY, top)
     this.draw = function () {
         renderingContext.save();
 
-        // renderingContext.translate(this.x, this.y);
-
         if (this.top)
             smashSprite.draw(renderingContext, this.x, this.y);
         else
@@ -110,6 +105,34 @@ function FloorThings(offsetX)
         renderingContext.translate(this.x, this.y);
 
         rockSprite[this.rockType].draw(renderingContext, 0, 0);
+
+        renderingContext.restore();
+    }
+}
+
+function Explosion()
+{
+    this.frame = 0;
+    this.animation = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
+    this.x = width / 2;
+    this.y = height / 2;
+
+    this.update = function(x, y)
+    {
+        var n = 5;
+
+        this.frame += frames % n === 0 ? 1 : 0;
+        this.frame %= this.animation.length;            // makes sure that we stay within the animation array
+
+        this.x = (x + charSprite[0].width / 2) / 2;
+        this.y = (y - charSprite[0].height)/ 2;
+    };
+
+    this.draw = function () {
+        renderingContext.save();
+
+        var n = this.animation[this.frame];
+        explosionSprite[n].draw(renderingContext, this.x, this.y);
 
         renderingContext.restore();
     }

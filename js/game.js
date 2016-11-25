@@ -3,8 +3,10 @@
  */
 var
     liara,
+    endAnim,
     blocksArray = [],
     rocksArray = [],
+    highScores = [],
     canvas,
     renderingContext,
     width,
@@ -14,12 +16,14 @@ var
     offsetBlocks,
     offsetRocks,
     myGradient,
-    myGroundGradient;
+    myGroundGradient,
+    madeCut;
 
 var frames = 0,
     states = {Splash: 0, Game: 1, Score: 2},
     numSmashyThings,
-    myScore = 0;
+    myScore = 0,
+    gameOver = false;
 
 var UPSPEED = 5,
     GRAVITY = 0.25,
@@ -27,7 +31,9 @@ var UPSPEED = 5,
     BOTTOM_PCT = 0.15,
     NUM_ROCKS = 100,
     SCALE_FACTOR = 0.5,
-    POINTS_PER_DODGE = 15;
+    POINTS_PER_DODGE = 15,
+    MAX_SCORES = 5,
+    NEW_GAME_BUTTON_OFFSET = 15;
 
 
 function main() {
@@ -39,6 +45,7 @@ function main() {
     offsetRocks = width / NUM_ROCKS;
     $("body").append(canvas);
     liara = new Character();
+    endAnim = new Explosion();
     for (var i = 0; i < numSmashyThings; i++) {
         blocksArray.push(new SmashyThings(i * offsetBlocks, 0, true));
         var spaceBlocks = blocksArray[2 * i].y + 1024 + 200;
@@ -91,11 +98,16 @@ function windowSetup() {
 function loadGraphics() {
     // initiate the sprite sheet
     var img = new Image();
+    var explosionImg = new Image();
     img.src = "images/myNewSprites1024.png";
 
     img.onload = function () {
         initSprites(this);
-        gameLoop();
+        explosionImg.src = "images/explosionSprite512.png";
+        explosionImg.onload = function() {
+            initExplosion(this);
+            gameLoop();
+        };
     };
 }
 
@@ -146,26 +158,32 @@ function update() {
                 }
             }
             else {
-                if (!blocksArray[i].passed)
-                {
-                    if(i % 2 === 0) {
+                if (!blocksArray[i].passed) {
+                    if (i % 2 === 0) {
                         myScore += POINTS_PER_DODGE;
                         blocksArray[i].passed = true;
-                        console.log(myScore);
                     }
                 }
             }
         }
     }
+    else if (currentState === states.Score)
+    {
+        endAnim.update(liara.x, liara.y);
+    }
 }
 
 function render() {
-    $("#scoreDiv").html(myScore);
     renderingContext.fillStyle = myGradient;
+
+    renderingContext.save();
+    renderingContext.shadowBlur = 3;
+    renderingContext.shadowColor = "black";
     renderingContext.fillRect(0, 0, width, height - height * BOTTOM_PCT);
     for (var i = 0; i < blocksArray.length; i++) {
         blocksArray[i].draw();
     }
+    renderingContext.restore();
 
     renderingContext.fillStyle = myGroundGradient;
     renderingContext.fillRect(0, height - height * BOTTOM_PCT, width, height * BOTTOM_PCT);
@@ -177,35 +195,93 @@ function render() {
 
     }
 
-    if (currentState != states.Splash)
-    {
-        renderingContext.font = "40px Verdana";
-        renderingContext.fillStyle = "orange";
-        renderingContext.textAlign = "right";
-        renderingContext.fillText("Score: " + myScore, width - 0.1 * width, 0.1 * height);
-    }
-
-    if (currentState === states.Splash)
-    {
-        renderingContext.font = "75px Verdana";
+    if (currentState === states.Splash) {
+        renderingContext.font = "bold 75px Verdana";
         renderingContext.fillStyle = "black";
         renderingContext.textAlign = "center";
         renderingContext.fillText("Keep Liara Alive!", width / 2, 0.2 * height);
 
-        renderingContext.font = "40px Verdana";
+        renderingContext.font = "bold 40px Verdana";
         renderingContext.fillStyle = "black";
         renderingContext.textAlign = "center";
         renderingContext.fillText("Click Anywhere to Start", width / 2, height - 0.2 * height);
     }
-    else if (currentState === states.Score)
-    {
-        renderingContext.fillStyle = "rgba(0, 0, 0, 0.5)";
+    else if (currentState === states.Score) {
+        if (!gameOver) {
+            madeCut = false;
+            gameOver = true;
+            if (!storage.local.get("highScores")) {
+                storage.local.set("highScores", myScore);
+            }
+            else {
+                highScores = storage.local.get("highScores").split(",");
+
+                // convert elements of local storage to numbers
+                for (var i = 0; i < highScores.length; i++) {
+                    highScores[i] = Number(highScores[i]);
+                }
+                // check if the high score board is filled
+                if (highScores.length === MAX_SCORES) {
+                    // check if the new score qualifies for the high score board
+                    for (var i = 0; i < highScores.length; i++) {
+                        if (myScore >= highScores[i]) {
+                            highScores.pop();
+                            highScores.push(myScore);
+                            madeCut = true;
+                            break;
+                        }
+                    }
+                }
+                // if not filled, add the new score
+                else {
+                    highScores.push(myScore);
+                }
+
+                highScores.sort(function (a, b) {
+                    return b - a
+                });
+                storage.local.set("highScores", highScores);
+            }
+        }
+
+        endAnim.draw();
+        renderingContext.fillStyle = "rgba(0, 0, 0, 0.2)";
         renderingContext.fillRect(0, 0, width, height);
-        renderingContext.font = "40px Verdana";
-        renderingContext.fillStyle = "black";
+
+        renderingContext.save();
+        renderingContext.shadowBlur = 5;
+        renderingContext.shadowColor = "black";
+        renderingContext.font = "bold 60px Verdana";
+        renderingContext.fillStyle = "darkred";
         renderingContext.textAlign = "center";
-        renderingContext.fillText("You got a score of " + myScore, width / 2, 0.2 * height);
-        renderingContext.fillText("Click to Begin Again", width / 2, height - 0.2 * height);
+        renderingContext.textBaseline = "top";
+        renderingContext.fillText("GAME OVER", width / 2, 0);
+        renderingContext.font = "bold 40px Verdana";
+        renderingContext.fillText("You got a score of " + myScore, width / 2, 0.1 * height);
+        if (madeCut)
+            renderingContext.fillText("Yay, you made the list!", width / 2, 0.2 * height);
+        renderingContext.fillText("High Scores", width / 2, 0.3 * height);
+        renderingContext.font = "bold 20px Verdana";
+        for (var i = 0; i < highScores.length; i++)
+        {
+            renderingContext.fillText(highScores[i], width / 2, (0.4 + i * 0.05) * height);
+        }
+
+
+        renderingContext.textBaseline = "alphabetic";
+        newGameBtn.draw(renderingContext, (width - newGameBtn.width) / 2, height - 0.15 * height - newGameBtn.height - NEW_GAME_BUTTON_OFFSET);
+        renderingContext.restore();
+
+    }
+    else {
+        renderingContext.save();
+        renderingContext.shadowBlur = 5;
+        renderingContext.shadowColor = "black";
+        renderingContext.font = "bold 30px Verdana";
+        renderingContext.fillStyle = "orange";
+        renderingContext.textAlign = "right";
+        renderingContext.fillText("Score: " + myScore, width - 0.1 * width, 0.1 * height);
+        renderingContext.restore();
     }
 }
 
@@ -216,14 +292,19 @@ function onpress(event) {               // need event for a reset button
     else if (currentState === states.Splash) {
         currentState = states.Game;
     }
-    else
-    {
-        // currentState = states.Splash;
-        // blocksArray = [];
-        // for (var i = 0; i < numSmashyThings; i++) {
-        //     blocksArray.push(new SmashyThings(i * offsetBlocks, 0, true));
-        //     var spaceBlocks = blocksArray[2 * i].y + 1024 + 200;
-        //     blocksArray.push(new SmashyThings(i * offsetBlocks, spaceBlocks, false));
-        // }
+    else {
+        if ((event.pageX >= (width / 0.8 - newGameBtn.width) / 2 && event.pageX <= (width / 0.8 + newGameBtn.width) / 2) &&
+            (event.pageY >= (height - 0.15 * height - newGameBtn.height - 15) && event.pageY <= (height - 0.15 * height - NEW_GAME_BUTTON_OFFSET)))
+        {
+            currentState = states.Splash;
+            blocksArray = [];
+            for (var i = 0; i < numSmashyThings; i++) {
+                blocksArray.push(new SmashyThings(i * offsetBlocks, 0, true));
+                var spaceBlocks = blocksArray[2 * i].y + 1024 + 200;
+                blocksArray.push(new SmashyThings(i * offsetBlocks, spaceBlocks, false));
+            }
+            myScore = 0;
+            gameOver = false;
+        }
     }
 }
