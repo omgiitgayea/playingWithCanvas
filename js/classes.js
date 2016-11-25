@@ -119,7 +119,7 @@ function Explosion()
 
     this.update = function(x, y)
     {
-        var n = 5;
+        var n = 10;
 
         this.frame += frames % n === 0 ? 1 : 0;
         this.frame %= this.animation.length;            // makes sure that we stay within the animation array
