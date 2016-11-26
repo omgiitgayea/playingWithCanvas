@@ -1,8 +1,7 @@
 /**
  * Created by GodaiYuusaku on 11/14/16.
  */
-function Character()
-{
+function Character() {
     this.frame = 0;
     this.animation = [0, 1, 2, 1];
     this.x = width / 2;
@@ -11,19 +10,16 @@ function Character()
     this.scale = SCALE_FACTOR;
     this.velocity = 0;
 
-    this.jump = function()
-    {
+    this.jump = function () {
         this.velocity -= UPSPEED;
     };
 
-    this.update = function()
-    {
+    this.update = function () {
         var n = currentState === states.Splash ? 10 : 5;
 
         this.frame += frames % n === 0 ? 1 : 0;
         this.frame %= this.animation.length;            // makes sure that we stay within the animation array
-        if (currentState === states.Splash)
-        {
+        if (currentState === states.Splash) {
             this.x = width / 2;
             this.y = height / 2;
             this.updateIdleChar();
@@ -31,7 +27,9 @@ function Character()
         else if (currentState === states.Game) {
 
             if ((this.y < ((height - charSprite[0].height / 2 - height * BOTTOM_PCT) / SCALE_FACTOR)) && this.y >= -25) {
-                this.velocity += GRAVITY;
+                if (!cheatMode) {
+                    this.velocity += GRAVITY;
+                }
                 this.y += this.velocity;
             }
             else {
@@ -40,8 +38,8 @@ function Character()
         }
     };
 
-    this.updateIdleChar = function() {
-        this.y += 5 * Math.cos(frames/10);
+    this.updateIdleChar = function () {
+        this.y += 5 * Math.cos(frames / 10);
         this.rotation = 0;
         this.velocity = 0;
     };
@@ -59,8 +57,7 @@ function Character()
     }
 }
 
-function SmashyThings(offsetX, offsetY, top)
-{
+function SmashyThings(offsetX, offsetY, top) {
     this.x = width + offsetX;
     this.top = top;
     this.passed = false;
@@ -69,8 +66,7 @@ function SmashyThings(offsetX, offsetY, top)
     else
         this.y = offsetY;
 
-    this.update = function()
-    {
+    this.update = function () {
         if (currentState == states.Game)
             this.x -= XSPEED;
     };
@@ -87,14 +83,12 @@ function SmashyThings(offsetX, offsetY, top)
     }
 }
 
-function FloorThings(offsetX)
-{
+function FloorThings(offsetX) {
     this.x = offsetX;
     this.y = height - Math.floor(Math.random() * (height * BOTTOM_PCT));
     this.rockType = Math.floor(Math.random() * 5);
 
-    this.update = function()
-    {
+    this.update = function () {
         if (currentState == states.Game)
             this.x -= XSPEED;
     };
@@ -110,22 +104,20 @@ function FloorThings(offsetX)
     }
 }
 
-function Explosion()
-{
+function Explosion() {
     this.frame = 0;
     this.animation = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
     this.x = width / 2;
     this.y = height / 2;
 
-    this.update = function(x, y)
-    {
+    this.update = function (x, y) {
         var n = 10;
 
         this.frame += frames % n === 0 ? 1 : 0;
         this.frame %= this.animation.length;            // makes sure that we stay within the animation array
 
         this.x = (x + charSprite[0].width / 2) / 2;
-        this.y = (y - charSprite[0].height)/ 2;
+        this.y = (y - charSprite[0].height) / 2;
     };
 
     this.draw = function () {

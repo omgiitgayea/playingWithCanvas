@@ -17,13 +17,16 @@ var
     offsetRocks,
     myGradient,
     myGroundGradient,
-    madeCut;
+    madeCut,
+    spacing;
 
 var frames = 0,
     states = {Splash: 0, Game: 1, Score: 2},
     numSmashyThings,
     myScore = 0,
-    gameOver = false;
+    gameOver = false,
+    cheatMode = false,
+    controlMode = "Tap";
 
 var UPSPEED = 5,
     GRAVITY = 0.25,
@@ -33,7 +36,8 @@ var UPSPEED = 5,
     SCALE_FACTOR = 0.5,
     POINTS_PER_DODGE = 15,
     MAX_SCORES = 5,
-    NEW_GAME_BUTTON_OFFSET = 15;
+    NEW_GAME_BUTTON_OFFSET = 15,
+    NUM_MODES = 5;
 
 
 function main() {
@@ -46,11 +50,7 @@ function main() {
     $("body").append(canvas);
     liara = new Character();
     endAnim = new Explosion();
-    for (var i = 0; i < numSmashyThings; i++) {
-        blocksArray.push(new SmashyThings(i * offsetBlocks, 0, true));
-        var spaceBlocks = blocksArray[2 * i].y + 1024 + 200;
-        blocksArray.push(new SmashyThings(i * offsetBlocks, spaceBlocks, false));
-    }
+
     for (var i = 0; i < NUM_ROCKS; i++) {
         rocksArray.push(new FloorThings(i * offsetRocks));
     }
@@ -58,6 +58,16 @@ function main() {
     currentState = states.Splash;
 }
 
+function isTouchDevice()
+{
+    try {
+        document.createEvent("TouchEvent");
+        return true;
+    }
+    catch (event) {
+        return false;
+    }
+}
 function canvasSetup() {
     canvas = document.createElement("canvas");
 
@@ -84,10 +94,11 @@ function windowSetup() {
     height = window.innerHeight;
 
     var inputEvent = "touchstart";
-    if (width >= 500) {
+    if (!isTouchDevice()) {
         width = width * 0.8;
         height = height * 0.8;
         inputEvent = "mousedown";
+        controlMode = "Click";
     }
 
     currentX = width;
@@ -104,7 +115,7 @@ function loadGraphics() {
     img.onload = function () {
         initSprites(this);
         explosionImg.src = "images/explosionSprite512.png";
-        explosionImg.onload = function() {
+        explosionImg.onload = function () {
             initExplosion(this);
             gameLoop();
         };
@@ -135,7 +146,7 @@ function update() {
             if (blocksArray[i].x <= 0 - smashSprite.width) {
                 blocksArray.splice(0, 2);
                 blocksArray.push(new SmashyThings(0, 0, true));
-                var spaceBlocks = blocksArray[blocksArray.length - 1].y + 1024 + 200;
+                var spaceBlocks = blocksArray[blocksArray.length - 1].y + 1024 + spacing;
                 blocksArray.push(new SmashyThings(0, spaceBlocks, false));
             }
             var midCharX = SCALE_FACTOR * (liara.x + charSprite[0].width / 2);
@@ -144,15 +155,17 @@ function update() {
             var midRockY = blocksArray[i].y + smashSprite.height / 2;
 
             if ((blocksArray[i].x + smashSprite.width) >= (SCALE_FACTOR * liara.x)) {
-                if ((midRockX - midCharX) < ((SCALE_FACTOR * charSprite[0].width + smashSprite.width) / 2)) {
-                    if (i % 2 === 0) {
-                        if ((midCharY - midRockY) < ((SCALE_FACTOR * charSprite[0].height + smashSprite.height) / 2)) {
-                            currentState = states.Score;
+                if (!cheatMode) {
+                    if ((midRockX - midCharX) < ((SCALE_FACTOR * charSprite[0].width  + smashSprite.width / 2) / 2)) {
+                        if (i % 2 === 0) {
+                            if ((midCharY - midRockY) < ((SCALE_FACTOR * charSprite[0].height + smashSprite.height) / 2)) {
+                                currentState = states.Score;
+                            }
                         }
-                    }
-                    else {
-                        if ((midRockY - midCharY) < ((SCALE_FACTOR * charSprite[0].height + smashSprite.height) / 2)) {
-                            currentState = states.Score;
+                        else {
+                            if ((midRockY - midCharY) < ((SCALE_FACTOR * charSprite[0].height + smashSprite.height) / 2)) {
+                                currentState = states.Score;
+                            }
                         }
                     }
                 }
@@ -167,8 +180,7 @@ function update() {
             }
         }
     }
-    else if (currentState === states.Score)
-    {
+    else if (currentState === states.Score) {
         endAnim.update(liara.x, liara.y);
     }
 }
@@ -199,49 +211,55 @@ function render() {
         renderingContext.font = "bold 75px Verdana";
         renderingContext.fillStyle = "black";
         renderingContext.textAlign = "center";
-        renderingContext.fillText("Keep Liara Alive!", width / 2, 0.2 * height);
+        renderingContext.textBaseline = "top";
+        renderingContext.fillText("Keep Liara Alive!", width / 2, 0);
 
         renderingContext.font = "bold 40px Verdana";
         renderingContext.fillStyle = "black";
         renderingContext.textAlign = "center";
-        renderingContext.fillText("Click Anywhere to Start", width / 2, height - 0.2 * height);
+        renderingContext.fillText(controlMode + " on your desired mode to start", width / 2, 0.15 * height);
+        difficultyModes.draw(renderingContext, (width - difficultyModes.width) / 2, 0.6 * height - difficultyModes.height);
     }
     else if (currentState === states.Score) {
         if (!gameOver) {
             madeCut = false;
             gameOver = true;
-            if (!storage.local.get("highScores")) {
-                storage.local.set("highScores", myScore);
-            }
-            else {
-                highScores = storage.local.get("highScores").split(",");
 
-                // convert elements of local storage to numbers
-                for (var i = 0; i < highScores.length; i++) {
-                    highScores[i] = Number(highScores[i]);
+            if (!cheatMode) {
+                if (!storage.local.get("highScores")) {
+                    storage.local.set("highScores", myScore);
                 }
-                // check if the high score board is filled
-                if (highScores.length === MAX_SCORES) {
-                    // check if the new score qualifies for the high score board
+                else {
+                    highScores = storage.local.get("highScores").split(",");
+
+                    // convert elements of local storage to numbers
                     for (var i = 0; i < highScores.length; i++) {
-                        if (myScore >= highScores[i]) {
-                            highScores.pop();
-                            highScores.push(myScore);
-                            madeCut = true;
-                            break;
+                        highScores[i] = Number(highScores[i]);
+                    }
+                    // check if the high score board is filled
+                    if (highScores.length === MAX_SCORES) {
+                        // check if the new score qualifies for the high score board
+                        for (var i = 0; i < highScores.length; i++) {
+                            if (myScore >= highScores[i]) {
+                                highScores.pop();
+                                highScores.push(myScore);
+                                madeCut = true;
+                                break;
+                            }
                         }
                     }
-                }
-                // if not filled, add the new score
-                else {
-                    highScores.push(myScore);
-                }
+                    // if not filled, add the new score
+                    else {
+                        highScores.push(myScore);
+                    }
 
-                highScores.sort(function (a, b) {
-                    return b - a
-                });
-                storage.local.set("highScores", highScores);
+                    highScores.sort(function (a, b) {
+                        return b - a
+                    });
+                    storage.local.set("highScores", highScores);
+                }
             }
+            highScores = storage.local.get("highScores").split(",");
         }
 
         endAnim.draw();
@@ -258,17 +276,20 @@ function render() {
         renderingContext.fillText("GAME OVER", width / 2, 0);
         renderingContext.font = "bold 40px Verdana";
         renderingContext.fillText("You got a score of " + myScore, width / 2, 0.1 * height);
-        if (madeCut)
-            renderingContext.fillText("Yay, you made the list!", width / 2, 0.2 * height);
+        if (!cheatMode) {
+            if (madeCut)
+                renderingContext.fillText("Yay, you made the list!", width / 2, 0.2 * height);
+        }
+        else
+        {
+            renderingContext.fillText("Did you think your score would count?", width / 2, 0.2 * height);
+        }
         renderingContext.fillText("High Scores", width / 2, 0.3 * height);
         renderingContext.font = "bold 20px Verdana";
-        for (var i = 0; i < highScores.length; i++)
-        {
+        for (var i = 0; i < highScores.length; i++) {
             renderingContext.fillText(highScores[i], width / 2, (0.4 + i * 0.05) * height);
         }
 
-
-        renderingContext.textBaseline = "alphabetic";
         newGameBtn.draw(renderingContext, (width - newGameBtn.width) / 2, height - 0.15 * height - newGameBtn.height - NEW_GAME_BUTTON_OFFSET);
         renderingContext.restore();
 
@@ -281,6 +302,11 @@ function render() {
         renderingContext.fillStyle = "orange";
         renderingContext.textAlign = "right";
         renderingContext.fillText("Score: " + myScore, width - 0.1 * width, 0.1 * height);
+        if (myScore > 500)
+        {
+            renderingContext.textAlign = "center";
+            renderingContext.fillText(controlMode + " to End Game", width / 2, 0.85 * height);
+        }
         renderingContext.restore();
     }
 }
@@ -290,21 +316,47 @@ function onpress(event) {               // need event for a reset button
         liara.jump();
     }
     else if (currentState === states.Splash) {
-        currentState = states.Game;
+        if (event.pageX >= (width / 0.8 - difficultyModes.width) / 2 && event.pageX <= (width / 0.8 + difficultyModes.width) / 2) {
+            if (event.pageY >= (0.6 * height - difficultyModes.height)) {
+                if (event.pageY <= (0.6 * height - difficultyModes.height / NUM_MODES * 4)) {
+                    spacing = SCALE_FACTOR * charSprite[0].height * 10;
+                }
+                else if (event.pageY <= (0.6 * height - difficultyModes.height / NUM_MODES * 3)) {
+                    spacing = SCALE_FACTOR * charSprite[0].height * 5;
+                }
+                else if (event.pageY <= (0.6 * height - difficultyModes.height / NUM_MODES * 2)) {
+                    spacing = SCALE_FACTOR * charSprite[0].height * 3;
+                }
+                else if (event.pageY <= (0.6 * height - difficultyModes.height / NUM_MODES)) {
+                    spacing = 0;
+                }
+                else if (event.pageY <= (0.6 * height)) {
+                    spacing = SCALE_FACTOR * charSprite[0].height * 10;
+                    cheatMode = true;
+                }
+                if (event.pageY <= (0.6 * height)) {
+                    currentState = states.Game;
+                    for (var i = 0; i < numSmashyThings; i++) {
+                        blocksArray.push(new SmashyThings(i * offsetBlocks, 0, true));
+                        var spaceBlocks = blocksArray[2 * i].y + 1024 + spacing;
+                        blocksArray.push(new SmashyThings(i * offsetBlocks, spaceBlocks, false));
+                    }
+                }
+            }
+        }
     }
     else {
         if ((event.pageX >= (width / 0.8 - newGameBtn.width) / 2 && event.pageX <= (width / 0.8 + newGameBtn.width) / 2) &&
-            (event.pageY >= (height - 0.15 * height - newGameBtn.height - 15) && event.pageY <= (height - 0.15 * height - NEW_GAME_BUTTON_OFFSET)))
-        {
+            (event.pageY >= (height - 0.15 * height - newGameBtn.height - 15) && event.pageY <= (height - 0.15 * height - NEW_GAME_BUTTON_OFFSET))) {
             currentState = states.Splash;
             blocksArray = [];
-            for (var i = 0; i < numSmashyThings; i++) {
-                blocksArray.push(new SmashyThings(i * offsetBlocks, 0, true));
-                var spaceBlocks = blocksArray[2 * i].y + 1024 + 200;
-                blocksArray.push(new SmashyThings(i * offsetBlocks, spaceBlocks, false));
-            }
             myScore = 0;
             gameOver = false;
+            cheatMode = false;
         }
+        // else if()
+        // {
+        //     storage.clear();
+        // }
     }
 }
