@@ -21,7 +21,7 @@ var
     spacing;
 
 var frames = 0,
-    states = {Splash: 0, Game: 1, Score: 2},
+    states = {Splash: 0, Game: 1, Score: 2, Rules: 3},
     numSmashyThings,
     myScore = 0,
     gameOver = false,
@@ -228,6 +228,20 @@ function render() {
         renderingContext.fillText(controlMode + " on your desired mode to start", width / 2, 0.15 * height);
         difficultyModes.draw(renderingContext, (width - difficultyModes.width) / 2, 0.6 * height - difficultyModes.height);
     }
+    else if (currentState === states.Rules)
+    {
+        renderingContext.font = "bold 75px Verdana";
+        renderingContext.fillStyle = "black";
+        renderingContext.textAlign = "center";
+        renderingContext.textBaseline = "top";
+        renderingContext.fillText("Keep Liara Alive!", width / 2, 0);
+
+        renderingContext.font = "bold 40px Verdana";
+        renderingContext.fillStyle = "black";
+        renderingContext.textAlign = "center";
+        renderingContext.fillText(controlMode + " to make Liara swim up", width / 2, 0.15 * height);
+        renderingContext.fillText(controlMode + " to start the game", width / 2, 0.25 * height);
+    }
     else if (currentState === states.Score) {
         if (!gameOver) {
             madeCut = false;
@@ -325,6 +339,10 @@ function onpress(event) {               // need event for a reset button
     if (currentState === states.Game) {
         liara.jump();
     }
+    else if(currentState === states.Rules)
+    {
+        currentState = states.Game;
+    }
     else if (currentState === states.Splash) {
         if (!tapEnabled) {
             if (event.pageX >= (width - difficultyModes.width) / 2 && event.pageX <= (width + difficultyModes.width) / 2) {
@@ -346,7 +364,7 @@ function onpress(event) {               // need event for a reset button
                         cheatMode = true;
                     }
                     if (event.pageY <= (0.6 * height)) {
-                        currentState = states.Game;
+                        currentState = states.Rules;
                         for (var i = 0; i < numSmashyThings; i++) {
                             blocksArray.push(new SmashyThings(i * offsetBlocks, 0, true));
                             var spaceBlocks = blocksArray[2 * i].y + 1024 + spacing;
@@ -377,7 +395,7 @@ function onpress(event) {               // need event for a reset button
                         cheatMode = true;
                     }
                     if (event.targetTouches[0].pageY <= (0.6 * height)) {
-                        currentState = states.Game;
+                        currentState = states.Rules;
                         for (var i = 0; i < numSmashyThings; i++) {
                             blocksArray.push(new SmashyThings(i * offsetBlocks, 0, true));
                             var spaceBlocks = blocksArray[2 * i].y + 1024 + spacing;

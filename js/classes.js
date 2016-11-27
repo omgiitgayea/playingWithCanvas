@@ -19,7 +19,7 @@ function Character() {
 
         this.frame += frames % n === 0 ? 1 : 0;
         this.frame %= this.animation.length;            // makes sure that we stay within the animation array
-        if (currentState === states.Splash) {
+        if (currentState === states.Splash || currentState === states.Rules) {
             this.x = width / 2;
             this.y = height / 2;
             this.updateIdleChar();
