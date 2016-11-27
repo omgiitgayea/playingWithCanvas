@@ -95,8 +95,8 @@ function windowSetup() {
 
     var inputEvent = "touchstart";
     if (!isTouchDevice()) {
-        width = width * 0.8;
-        height = height * 0.8;
+        // width = width * 0.8;
+        // height = height * 0.8;
         inputEvent = "mousedown";
         controlMode = "Click";
     }
@@ -316,7 +316,7 @@ function onpress(event) {               // need event for a reset button
         liara.jump();
     }
     else if (currentState === states.Splash) {
-        if (event.pageX >= (width / 0.8 - difficultyModes.width) / 2 && event.pageX <= (width / 0.8 + difficultyModes.width) / 2) {
+        if (event.pageX >= (width - difficultyModes.width) / 2 && event.pageX <= (width + difficultyModes.width) / 2) {
             if (event.pageY >= (0.6 * height - difficultyModes.height)) {
                 if (event.pageY <= (0.6 * height - difficultyModes.height / NUM_MODES * 4)) {
                     spacing = SCALE_FACTOR * charSprite[0].height * 10;
@@ -346,7 +346,7 @@ function onpress(event) {               // need event for a reset button
         }
     }
     else {
-        if ((event.pageX >= (width / 0.8 - newGameBtn.width) / 2 && event.pageX <= (width / 0.8 + newGameBtn.width) / 2) &&
+        if ((event.pageX >= (width - newGameBtn.width) / 2 && event.pageX <= (width + newGameBtn.width) / 2) &&
             (event.pageY >= (height - 0.15 * height - newGameBtn.height - 15) && event.pageY <= (height - 0.15 * height - NEW_GAME_BUTTON_OFFSET))) {
             currentState = states.Splash;
             blocksArray = [];
