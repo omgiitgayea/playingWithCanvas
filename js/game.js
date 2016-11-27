@@ -316,26 +316,26 @@ function onpress(event) {               // need event for a reset button
         liara.jump();
     }
     else if (currentState === states.Splash) {
-        if (event.pageX >= (width - difficultyModes.width) / 2 && event.pageX <= (width + difficultyModes.width) / 2) {
-            if (event.pageY >= (0.6 * height - difficultyModes.height)) {
-                if (event.pageY <= (0.6 * height - difficultyModes.height / NUM_MODES * 4)) {
+        if (event.screenX >= (width - difficultyModes.width) / 2 && event.screenX <= (width + difficultyModes.width) / 2) {
+            if (event.screenY >= (0.6 * height - difficultyModes.height)) {
+                if (event.screenY <= (0.6 * height - difficultyModes.height / NUM_MODES * 4)) {
                     spacing = SCALE_FACTOR * charSprite[0].height * 10;
                     alert("Click!");
                 }
-                else if (event.pageY <= (0.6 * height - difficultyModes.height / NUM_MODES * 3)) {
+                else if (event.screenY <= (0.6 * height - difficultyModes.height / NUM_MODES * 3)) {
                     spacing = SCALE_FACTOR * charSprite[0].height * 5;
                 }
-                else if (event.pageY <= (0.6 * height - difficultyModes.height / NUM_MODES * 2)) {
+                else if (event.screenY <= (0.6 * height - difficultyModes.height / NUM_MODES * 2)) {
                     spacing = SCALE_FACTOR * charSprite[0].height * 3;
                 }
-                else if (event.pageY <= (0.6 * height - difficultyModes.height / NUM_MODES)) {
+                else if (event.screenY <= (0.6 * height - difficultyModes.height / NUM_MODES)) {
                     spacing = 0;
                 }
-                else if (event.pageY <= (0.6 * height)) {
+                else if (event.screenY <= (0.6 * height)) {
                     spacing = SCALE_FACTOR * charSprite[0].height * 10;
                     cheatMode = true;
                 }
-                if (event.pageY <= (0.6 * height)) {
+                if (event.screenY <= (0.6 * height)) {
                     currentState = states.Game;
                     for (var i = 0; i < numSmashyThings; i++) {
                         blocksArray.push(new SmashyThings(i * offsetBlocks, 0, true));
@@ -347,8 +347,8 @@ function onpress(event) {               // need event for a reset button
         }
     }
     else {
-        if ((event.pageX >= (width - newGameBtn.width) / 2 && event.pageX <= (width + newGameBtn.width) / 2) &&
-            (event.pageY >= (height - 0.15 * height - newGameBtn.height - 15) && event.pageY <= (height - 0.15 * height - NEW_GAME_BUTTON_OFFSET))) {
+        if ((event.screenX >= (width - newGameBtn.width) / 2 && event.screenX <= (width + newGameBtn.width) / 2) &&
+            (event.screenY >= (height - 0.15 * height - newGameBtn.height - 15) && event.screenY <= (height - 0.15 * height - NEW_GAME_BUTTON_OFFSET))) {
             currentState = states.Splash;
             blocksArray = [];
             myScore = 0;
