@@ -312,6 +312,7 @@ function render() {
 }
 
 function onpress(event) {               // need event for a reset button
+    alert("Clicked!");
     if (currentState === states.Game) {
         liara.jump();
     }
