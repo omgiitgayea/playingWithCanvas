@@ -29,7 +29,7 @@ var frames = 0,
     tapEnabled = true,
     controlMode = "Tap";
 
-var UPSPEED = 5,
+var UPSPEED = 20,
     GRAVITY = 0.25,
     XSPEED = 2,
     BOTTOM_PCT = 0.15,
@@ -236,6 +236,7 @@ function render() {
             if (!cheatMode) {
                 if (!storage.local.get("highScores")) {
                     storage.local.set("highScores", myScore);
+                    madeCut = true;
                 }
                 else {
                     highScores = storage.local.get("highScores").split(",");
@@ -298,7 +299,8 @@ function render() {
             renderingContext.fillText(highScores[i], width / 2, (0.4 + i * 0.05) * height);
         }
 
-        newGameBtn.draw(renderingContext, (width - newGameBtn.width) / 2, height - 0.15 * height - newGameBtn.height - NEW_GAME_BUTTON_OFFSET);
+        newGameBtn.draw(renderingContext, (width - newGameBtn.width) / 2, height - 0.15 * height - 2 * newGameBtn.height - NEW_GAME_BUTTON_OFFSET);
+        clearListBtn.draw(renderingContext, (width - clearListBtn.width) / 2, height - 0.15 * height - clearListBtn.height - NEW_GAME_BUTTON_OFFSET);
         renderingContext.restore();
 
     }
@@ -389,28 +391,36 @@ function onpress(event) {               // need event for a reset button
     else {
         if (!tapEnabled) {
             if ((event.pageX >= (width - newGameBtn.width) / 2 && event.pageX <= (width + newGameBtn.width) / 2) &&
-                (event.pageY >= (height - 0.15 * height - newGameBtn.height - 15) && event.pageY <= (height - 0.15 * height - NEW_GAME_BUTTON_OFFSET))) {
+                (event.pageY >= (height - 0.15 * height - 2 * newGameBtn.height - 15) && event.pageY <= (height - 0.15 * height - newGameBtn.height - NEW_GAME_BUTTON_OFFSET))) {
                 currentState = states.Splash;
                 blocksArray = [];
                 myScore = 0;
                 gameOver = false;
                 cheatMode = false;
+            }
+            else if ((event.pageX >= (width - clearListBtn.width) / 2 && event.pageX <= (width + clearListBtn.width) / 2) &&
+                (event.pageY >= (height - 0.15 * height - clearListBtn.height - 15) && event.pageY <= (height - 0.15 * height - NEW_GAME_BUTTON_OFFSET)))
+            {
+                storage.clear();
+                highScores = [];
             }
         }
         else
         {
             if ((event.targetTouches[0].pageX >= (width - newGameBtn.width) / 2 && event.targetTouches[0].pageX <= (width + newGameBtn.width) / 2) &&
-                (event.targetTouches[0].pageY >= (height - 0.15 * height - newGameBtn.height - 15) && event.targetTouches[0].pageY <= (height - 0.15 * height - NEW_GAME_BUTTON_OFFSET))) {
+                (event.targetTouches[0].pageY >= (height - 0.15 * height - 2 * newGameBtn.height - 15) && event.targetTouches[0].pageY <= (height - 0.15 * height - newGameBtn.height - NEW_GAME_BUTTON_OFFSET))) {
                 currentState = states.Splash;
                 blocksArray = [];
                 myScore = 0;
                 gameOver = false;
                 cheatMode = false;
             }
+            else if ((event.targetTouches[0].pageX >= (width - clearListBtn.width) / 2 && event.targetTouches[0].pageX <= (width + clearListBtn.width) / 2) &&
+                (event.targetTouches[0].pageY >= (height - 0.15 * height - clearListBtn.height - 15) && event.targetTouches[0].pageY <= (height - 0.15 * height - NEW_GAME_BUTTON_OFFSET)))
+            {
+                storage.clear();
+                highScores = [];
+            }
         }
-        // else if()
-        // {
-        //     storage.clear();
-        // }
     }
 }

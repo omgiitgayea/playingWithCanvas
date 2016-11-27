@@ -6,6 +6,7 @@ var smashSprite;
 var smashSpriteBottom;
 var rockSprite;
 var newGameBtn;
+var clearListBtn;
 var difficultyModes;
 var explosionSprite;
 
@@ -44,6 +45,8 @@ function initSprites(img)
     ];
 
     newGameBtn = new Sprite(img, 0, 216.5, 153, 55);
+
+    clearListBtn = new Sprite(img, 0, 546.5, 153, 55);
 
     difficultyModes = new Sprite(img, 0, 271.5, 153, 275);
 }
