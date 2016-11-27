@@ -45,7 +45,13 @@ function main() {
     windowSetup();
     canvasSetup();
     loadGraphics();
-    numSmashyThings = 5;
+    if (height > width)
+    {
+        numSmashyThings = 2;
+    }
+    else {
+        numSmashyThings = 5;
+    }
     offsetBlocks = width / numSmashyThings;
     offsetRocks = width / NUM_ROCKS;
     $("body").append(canvas);
