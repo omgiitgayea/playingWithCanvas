@@ -312,7 +312,6 @@ function render() {
 }
 
 function onpress(event) {               // need event for a reset button
-    alert("Clicked!");
     if (currentState === states.Game) {
         liara.jump();
     }
@@ -321,6 +320,7 @@ function onpress(event) {               // need event for a reset button
             if (event.pageY >= (0.6 * height - difficultyModes.height)) {
                 if (event.pageY <= (0.6 * height - difficultyModes.height / NUM_MODES * 4)) {
                     spacing = SCALE_FACTOR * charSprite[0].height * 10;
+                    alert("Click!");
                 }
                 else if (event.pageY <= (0.6 * height - difficultyModes.height / NUM_MODES * 3)) {
                     spacing = SCALE_FACTOR * charSprite[0].height * 5;
