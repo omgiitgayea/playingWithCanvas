@@ -29,7 +29,7 @@ var frames = 0,
     tapEnabled = true,
     controlMode = "Tap";
 
-var UPSPEED = 20,
+var UPSPEED = 15,
     GRAVITY = 0.25,
     XSPEED = 2,
     BOTTOM_PCT = 0.15,
@@ -162,7 +162,7 @@ function update() {
             var midCharY = SCALE_FACTOR * (liara.y + charSprite[0].height / 2);
             var midRockY = blocksArray[i].y + smashSprite.height / 2;
 
-            if ((blocksArray[i].x + smashSprite.width) >= (SCALE_FACTOR * liara.x)) {
+            if ((blocksArray[i].x + smashSprite.width / 2) >= (SCALE_FACTOR * liara.x)) {
                 if (!cheatMode) {
                     if ((midRockX - midCharX) < ((SCALE_FACTOR * charSprite[0].width  + smashSprite.width / 2) / 2)) {
                         if (i % 2 === 0) {
@@ -274,6 +274,7 @@ function render() {
                     // if not filled, add the new score
                     else {
                         highScores.push(myScore);
+                        madeCut = true;
                     }
 
                     highScores.sort(function (a, b) {
@@ -281,8 +282,9 @@ function render() {
                     });
                     storage.local.set("highScores", highScores);
                 }
+                highScores = storage.local.get("highScores").split(",");
             }
-            highScores = storage.local.get("highScores").split(",");
+
         }
 
         endAnim.draw();
