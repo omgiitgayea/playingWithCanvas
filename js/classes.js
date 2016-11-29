@@ -116,7 +116,7 @@ function Explosion() {
         this.frame += frames % n === 0 ? 1 : 0;
         this.frame %= this.animation.length;            // makes sure that we stay within the animation array
 
-        this.x = (x + charSprite[0].width / 2) / 2;
+        this.x = (x + charSprite[0].width / 2 * SCALE_FACTOR) / 2;
         this.y = (y - charSprite[0].height) / 2;
     };
 
